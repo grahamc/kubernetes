@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 set -ux
 
 for service in kube-apiserver kube-controller-manager kube-scheduler; do

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 set -ux
 
 export PATH=$PATH:/snap/bin

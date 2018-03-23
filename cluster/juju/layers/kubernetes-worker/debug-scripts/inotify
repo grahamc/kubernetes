@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 set -ux
 
 # We had to bump inotify limits once in the past, hence why this oddly specific
