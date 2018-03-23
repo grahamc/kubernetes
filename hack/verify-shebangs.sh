@@ -23,9 +23,18 @@ set -o pipefail
 KUBE_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
 source "${KUBE_ROOT}/hack/lib/init.sh"
 
+function find_bad_files() {
+    grep -irclP \
+         -I '^#!(?!\/usr\/bin\/env).*' \
+         --exclude-dir="_output" \
+         --exclude-dir="Godeps" \
+         --exclude-dir=".git" \
+         --exclude-dir="vendor"
+}
+
 (
   cd "${KUBE_ROOT}"
-  badfiles=$(grep -irclP -I '^#!(?!\/usr\/bin\/env).*' --exclude-dir="_output" --exclude-dir="Godeps" --exclude-dir=".git" --exclude-dir="vendor")
+  badfiles=$(find_bad_files)
   if [[ ! -z "${badfiles}" ]]; then
       echo "The following files have shebangs that do not use /usr/bin/env. Please fix them."
       echo "${badfiles}"
