@@ -563,7 +563,7 @@ function kube::util::create_signing_certkey {
     local id=$3
     local purpose=$4
     # Create client ca
-    ${sudo} /bin/bash -e <<EOF
+    ${sudo} /usr/bin/env bash -e <<EOF
     rm -f "${dest_dir}/${id}-ca.crt" "${dest_dir}/${id}-ca.key"
     ${OPENSSL_BIN} req -x509 -sha256 -new -nodes -days 365 -newkey rsa:2048 -keyout "${dest_dir}/${id}-ca.key" -out "${dest_dir}/${id}-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
     echo '{"signing":{"default":{"expiry":"43800h","usages":["signing","key encipherment",${purpose}]}}}' > "${dest_dir}/${id}-ca-config.json"
@@ -585,7 +585,7 @@ function kube::util::create_client_certkey {
         SEP=","
         shift 1
     done
-    ${sudo} /bin/bash -e <<EOF
+    ${sudo} /usr/bin/env bash -e <<EOF
     cd ${dest_dir}
     echo '{"CN":"${cn}","names":[${groups}],"hosts":[""],"key":{"algo":"rsa","size":2048}}' | ${CFSSL_BIN} gencert -ca=${ca}.crt -ca-key=${ca}.key -config=${ca}-config.json - | ${CFSSLJSON_BIN} -bare client-${id}
     mv "client-${id}-key.pem" "client-${id}.key"
@@ -609,7 +609,7 @@ function kube::util::create_serving_certkey {
         SEP=","
         shift 1
     done
-    ${sudo} /bin/bash -e <<EOF
+    ${sudo} /usr/bin/env bash -e <<EOF
     cd ${dest_dir}
     echo '{"CN":"${cn}","hosts":[${hosts}],"key":{"algo":"rsa","size":2048}}' | ${CFSSL_BIN} gencert -ca=${ca}.crt -ca-key=${ca}.key -config=${ca}-config.json - | ${CFSSLJSON_BIN} -bare serving-${id}
     mv "serving-${id}-key.pem" "serving-${id}.key"
@@ -651,7 +651,7 @@ EOF
 
     # flatten the kubeconfig files to make them self contained
     username=$(whoami)
-    ${sudo} /bin/bash -e <<EOF
+    ${sudo} /usr/bin/env bash -e <<EOF
     $(kube::util::find-binary kubectl) --kubeconfig="${dest_dir}/${client_id}.kubeconfig" config view --minify --flatten > "/tmp/${client_id}.kubeconfig"
     mv -f "/tmp/${client_id}.kubeconfig" "${dest_dir}/${client_id}.kubeconfig"
     chown ${username} "${dest_dir}/${client_id}.kubeconfig"
