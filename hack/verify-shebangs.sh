@@ -25,7 +25,7 @@ source "${KUBE_ROOT}/hack/lib/init.sh"
 
 (
   cd "${KUBE_ROOT}"
-  badfiles=$(grep -irclP -I '^#!(?!\/usr\/bin\/env).*' --exclude-dir="_output" --exclude-dir="Godeps")
+  badfiles=$(grep -irclP -I '^#!(?!\/usr\/bin\/env).*' --exclude-dir="_output" --exclude-dir="Godeps" --exclude-dir=".git")
   if [[ ! -z "${badfiles}" ]]; then
       echo "The following files have shebangs that do not use /usr/bin/env. Please fix them."
       echo "${badfiles}"
